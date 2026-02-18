@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: "Stop guessing. Start retaining. StayFlow uses advanced ML to predict customer churn with high accuracy — so you can act first and keep more users.",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any"}
+      { url: "/favicon.ico"}
     ]
   }
 };
