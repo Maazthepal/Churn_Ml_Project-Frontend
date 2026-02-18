@@ -75,27 +75,32 @@ export default function PredictPage() {
     },
   });
 
-  async function onSubmit(values: FormValues) {
+async function onSubmit(values: FormValues) {
   setLoading(true);
   setError(null);
   setResult(null);
 
   try {
-    // Convert form values to URLSearchParams (FastAPI expects form-urlencoded)
     const formData = new URLSearchParams();
     Object.entries(values).forEach(([key, value]) => {
-      formData.append(key, value as string);
+      formData.append(key, String(value));
     });
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    const res = await fetch(`${apiUrl}/predict`, {
-      method: 'POST',                          // ← MUST be POST
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const fullUrl = `${apiUrl.replace(/\/$/, '')}/predict`;  // removes trailing slash if present
+
+    const res = await fetch(fullUrl, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
       },
-      body: formData,                          // ← correct body format
+      body: formData,
+      redirect: 'follow',
     });
+
+    // console.log('Response status:', res.status);
+    // console.log('Actual URL sent:', res.url); // shows final URL after any redirect
 
     if (!res.ok) {
       const errorText = await res.text();
@@ -105,8 +110,8 @@ export default function PredictPage() {
     const data = await res.json();
     setResult(data);
   } catch (err: any) {
-    console.error('Fetch error:', err);
-    setError(err.message || 'Failed to get prediction. Check console for details.');
+    console.error('Full fetch error:', err);
+    setError(err.message || 'Failed to predict');
   } finally {
     setLoading(false);
   }
@@ -216,7 +221,7 @@ export default function PredictPage() {
           <Card className="custom-card shadow-2xl border-0 mb-12 overflow-hidden relative">
             <div className="scan" />
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00FFB2] to-transparent opacity-50" />
-            
+
             <CardHeader className="pb-6 border-b border-white/[0.05]">
               <CardTitle className="text-2xl font-black tracking-tight text-white">Enter Customer Details</CardTitle>
               <CardDescription className="text-[#555]">Provide accurate data for each field to maximize prediction accuracy.</CardDescription>
@@ -224,7 +229,14 @@ export default function PredictPage() {
 
             <CardContent className="pt-8">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10" method="POST">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault(); // ← Blocks browser default GET submission
+                    form.handleSubmit(onSubmit)(e);
+                  }}
+                  className="space-y-10"
+                  noValidate
+                >
 
                   {/* Section 1: Demographics */}
                   <div className="space-y-6">
@@ -233,7 +245,7 @@ export default function PredictPage() {
                       DEMOGRAPHICS
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      
+
                       <FormField control={form.control} name="gender" render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-[#888] text-xs font-semibold tracking-wider">Gender</FormLabel>
@@ -333,7 +345,7 @@ export default function PredictPage() {
                       SERVICES
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      
+
                       {['PhoneService', 'MultipleLines', 'OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 'TechSupport', 'StreamingTV', 'StreamingMovies'].map((fieldName) => (
                         <FormField
                           key={fieldName}
@@ -390,7 +402,7 @@ export default function PredictPage() {
                       CONTRACT & BILLING
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      
+
                       <FormField control={form.control} name="Contract" render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-[#888] text-xs font-semibold tracking-wider">Contract Type</FormLabel>
@@ -534,7 +546,7 @@ export default function PredictPage() {
                 <CardTitle className="text-3xl font-black text-white tracking-tight">Prediction Result</CardTitle>
               </CardHeader>
               <CardContent className="pt-8 space-y-8">
-                
+
                 {/* Main result */}
                 <div className="text-center">
                   <h2
