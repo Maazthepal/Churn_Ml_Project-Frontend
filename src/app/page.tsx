@@ -260,7 +260,7 @@ export default function ChurnHome() {
           <div className="anim-hero">
             <div className="inline-flex items-center gap-2 bg-[rgba(0,255,178,0.08)] border border-[rgba(0,255,178,0.2)] rounded-full px-4 py-1.5 mb-7">
               <span className="blink w-1.5 h-1.5 rounded-full bg-[#00FFB2] shadow-[0_0_8px_#00FFB2]" />
-              <span className="text-[11px] text-[#00FFB2] font-bold tracking-widest">ML MODEL LIVE · 94.3% ACCURACY</span>
+              <span className="text-[11px] text-[#00FFB2] font-bold tracking-widest">ML MODEL LIVE · 87.4% ACCURACY</span>
             </div>
 
             <h1 className="text-[clamp(40px,5vw,64px)] font-black leading-[1.04] tracking-[-2.5px] text-white mb-6">
@@ -339,7 +339,7 @@ export default function ChurnHome() {
                   onClick={goToPredict}
                   className="mt-3 w-full py-2 rounded-lg text-[12px] font-bold text-[#070714] bg-[#00FFB2] hover:opacity-90 transition-opacity"
                 >
-                  Run full prediction with all 19 fields →
+                  Run full prediction →
                 </button>
               </div>
             )}

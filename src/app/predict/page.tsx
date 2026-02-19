@@ -505,7 +505,7 @@ async function onSubmit(values: FormValues) {
                       {loading ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Analyzing with ML Model...
+                          Analyzing ...
                         </>
                       ) : (
                         '⚡ Predict Churn Risk'
